@@ -1,0 +1,35 @@
+name: Trigger Manifest Update
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Checkout Manifest Repository
+      uses: actions/checkout@v4
+      with:
+        repository: '${{ github.repository_owner }}/my-app-manifests'
+        token: ${{ secrets.MANIFEST_REPO_TOKEN }}
+        path: 'manifest-holder'
+
+    - name: Update Plain YAML Image Version
+      run: |
+        cd manifest-holder
+        # This replaces the nginx version with a new tag automatically
+        sed -i "s|image: nginx:.*|image: nginx:1.30.1|" deployment.yaml
+
+    - name: Push Updated YAML to GitHub
+      run: |
+        cd manifest-holder
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@github.com"
+        git add deployment.yaml
+        git commit -m "chore: automated image update to version 1.25.3"
+        git push origin main
