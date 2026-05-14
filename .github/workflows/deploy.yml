@@ -31,5 +31,5 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@github.com"
         git add deployment.yaml
-        git commit -m "chore: automated image update to version 1.25.3"
+        git commit -m "chore: automated prod release tag to sha-${{ github.sha }} [skip ci]
         git push origin main
